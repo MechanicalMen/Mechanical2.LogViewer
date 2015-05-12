@@ -1,0 +1,238 @@
+﻿<metro:MetroWindow
+    x:Class="Mechanical.LogViewer.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:converters="clr-namespace:Mechanical.MVVM.Converters;assembly=Mechanical"
+    xmlns:app="clr-namespace:Mechanical.LogViewer"
+
+    Icon="..\Images\icon.ico"
+    Title="Log Viewer"
+    Width="1024"
+    Height="768"
+    EnableDWMDropShadow="True"
+
+    Loaded="MetroWindow_Loaded"
+
+    AllowDrop="True"
+    Drop="MetroWindow_Drop">
+
+    <metro:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Rectangle
+                Fill="#FFEDB20E"
+                Width="{TemplateBinding Width}"
+                Height="{TemplateBinding Height}"
+                Margin="6"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                RenderOptions.EdgeMode="Aliased">
+                <Rectangle.OpacityMask>
+                    <VisualBrush
+                        Stretch="Uniform"
+                        Visual="{StaticResource appbar_tools}"/>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </DataTemplate>
+    </metro:MetroWindow.IconTemplate>
+
+    <Window.Resources>
+        <converters:NullToBool x:Key="nullToFalseConverter" NullValue="False" NotNullValue="True"/>
+        <converters:BoolToVisibility x:Key="trueToVisibleConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+
+        <Style x:Key="CellTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="4,2,0,2"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <DataGrid
+            ItemsSource="{Binding Entries, Mode=OneWay}"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            CanUserResizeRows="False"
+            CanUserSortColumns="True"
+            IsReadOnly="True"
+            HeadersVisibility="All"
+            SelectionMode="Single"
+            SelectionUnit="FullRow"
+            FontSize="14"
+            MouseDoubleClick="DataGrid_MouseDoubleClick">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <!-- Remove highlight from selected row -->
+                    <Setter Property="Foreground" Value="Black" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="DataGrid" BasedOn="{StaticResource MetroDataGrid}">
+                    <!-- For some reason, the mouse-over effect is not visible, if this is set directly on the datagrid -->
+                    <Setter Property="AlternatingRowBackground" Value="#F0F0F0"/>
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}}, Path=DataContext.Index}"
+                        Style="{StaticResource CellTextBlockStyle}"
+                        Margin="5,0,2,0"
+                        Foreground="Gray"/>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn
+                    Header="Timestamp"
+                    SortMemberPath="LocalTimestamp">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding LocalTimestamp, StringFormat=yyyy-MM-dd HH:mm:ss.fff}"
+                                Style="{StaticResource CellTextBlockStyle}"
+                                Foreground="Gray"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn
+                    Header="Level"
+                    SortMemberPath="LogEntry.Level">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DataTemplate.Resources>
+                                <Style TargetType="Rectangle">
+                                    <Setter Property="Width" Value="24"/>
+                                    <Setter Property="Height" Value="24"/>
+                                    <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+                                    <Setter Property="RenderOptions.EdgeMode" Value="Aliased"/>
+                                </Style>
+                            </DataTemplate.Resources>
+                            <!-- Colors come from here: http://www.creepyed.com/2012/09/windows-8-colors-hex-code/ -->
+                            <Grid>
+                                <Rectangle
+                                    Fill="#FF309A19"
+                                    Visibility="{Binding LevelIsDebug, Converter={StaticResource trueToVisibleConverter}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush
+                                            Stretch="Uniform"
+                                            Visual="{StaticResource appbar_bug}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle
+                                    Fill="#FF3B70EA"
+                                    Visibility="{Binding LevelIsInformation, Converter={StaticResource trueToVisibleConverter}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush
+                                            Stretch="Uniform"
+                                            Visual="{StaticResource appbar_information_circle}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle
+                                    Fill="#FFF8981B"
+                                    Visibility="{Binding LevelIsWarning, Converter={StaticResource trueToVisibleConverter}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush
+                                            Stretch="Uniform"
+                                            Visual="{StaticResource appbar_warning}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle
+                                    Fill="#FFF62800"
+                                    Visibility="{Binding LevelIsError, Converter={StaticResource trueToVisibleConverter}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush
+                                            Stretch="Uniform"
+                                            Visual="{StaticResource appbar_stop}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle
+                                    Fill="#FFA91A00"
+                                    Visibility="{Binding LevelIsFatal, Converter={StaticResource trueToVisibleConverter}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush
+                                            Stretch="Uniform"
+                                            Visual="{StaticResource appbar_power}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Grid>
+                            <!--Image
+                                Source="{Binding LogEntry.Level, Converter={StaticResource logLevelConverter}}"
+                                Width="24"
+                                Height="24"
+                                Margin="0,2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/-->
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn
+                    Header="Message"
+                    SortMemberPath="LogEntry.Message"
+                    Width="*"
+                    MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding LogEntry.Message}"
+                                Style="{StaticResource CellTextBlockStyle}"
+                                TextWrapping="Wrap"
+                                FontSize="14"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn
+                    Header="File"
+                    SortMemberPath="LogEntry.FileName">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding LogEntry.FileName}"
+                                Style="{StaticResource CellTextBlockStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn
+                    Header="Member"
+                    SortMemberPath="LogEntry.MemberName">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding LogEntry.MemberName}"
+                                Style="{StaticResource CellTextBlockStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn
+                    Header="Line"
+                    SortMemberPath="LogEntry.LineNumber">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding LogEntry.LineNumber}"
+                                Style="{StaticResource CellTextBlockStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridCheckBoxColumn
+                    ElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                    Header="Exception"
+                    Binding="{Binding Path=LogEntry.Exception, Converter={StaticResource nullToFalseConverter}, Mode=OneWay}"
+                    IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</metro:MetroWindow>
