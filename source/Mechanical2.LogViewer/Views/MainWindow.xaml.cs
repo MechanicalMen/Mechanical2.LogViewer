@@ -25,9 +25,6 @@ using Mechanical.MVVM;
 //// TODO: string pattern filtering (log message at first) (above datagrid)
 //// TODO: toolbar (below datagrid) for opening single of multiple files
 
-//// TODO: create log sink for exceptions: show exception details PLUS buttons for breaking execution, logging and ignoring it, or terminating the application (un-cancellable shutting down event?)
-//// TODO: either replace current message box logsink with the new one, or add a button to it for showing it.
-
 namespace Mechanical.LogViewer.Views
 {
     /// <summary>
@@ -47,7 +44,7 @@ namespace Mechanical.LogViewer.Views
                 var directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 directory = System.IO.Path.GetFullPath(directory);
                 MechanicalApp.Log = LogEntrySerializer.ToXmlFile(System.IO.Path.Combine(directory, "LogViewer_log.xml"));
-                MechanicalApp.InitializeWindow(App.Current, this);
+                MechanicalApp.InitializeWindow(App.Current, this, exceptionGuiSink: new Mechanical.Common.Bootstrap.MessageBoxExceptionSink());
             }
 
             this.InitializeComponent();
@@ -98,7 +95,7 @@ namespace Mechanical.LogViewer.Views
                 var logEntryVM = (MainViewModel.LogEntryVM)dataGrid.SelectedItem;
                 if( logEntryVM.NotNullReference()
                  && logEntryVM.LogEntry.Exception.NotNullReference() )
-                    await LogViewerGUI.ShowException(logEntryVM.LogEntry.Exception);
+                    await LogViewerGUI.ShowExceptionAsync(logEntryVM.LogEntry.Exception);
             }
             catch( Exception ex )
             {

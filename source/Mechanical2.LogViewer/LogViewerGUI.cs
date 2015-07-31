@@ -16,14 +16,14 @@ namespace Mechanical.LogViewer
     /// </summary>
     public static class LogViewerGUI
     {
-        #region ShowKeyValue
+        #region ShowKeyValues
 
         /// <summary>
-        /// Displays a key-value pair.
+        /// Displays key-value pairs.
         /// </summary>
         /// <param name="pairs">The key-value pairs to show.</param>
         /// <returns>An object representing the asynchronous operation.</returns>
-        public static Task ShowKeyValue( params KeyValuePair<string, string>[] pairs )
+        public static Task ShowKeyValuesAsync( params KeyValuePair<string, string>[] pairs )
         {
             return UI.InvokeAsync(() =>
             {
@@ -46,25 +46,45 @@ namespace Mechanical.LogViewer
 
         #region ShowException
 
+        private static void ShowExceptionCore( ExceptionInfo exception )
+        {
+            if( exception.NotNullReference() )
+            {
+                using( var vm = ExceptionViewModel.From(exception) )
+                {
+                    var wnd = new ExceptionWindow();
+                    wnd.DataContext = vm;
+                    wnd.ShowDialog();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Displays the specified <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="exception">The <see cref="ExceptionInfo"/> to show.</param>
+        public static void ShowException( ExceptionInfo exception )
+        {
+            UI.Invoke(() => ShowExceptionCore(exception));
+        }
+
         /// <summary>
         /// Displays the specified <paramref name="exception"/>.
         /// </summary>
         /// <param name="exception">The <see cref="ExceptionInfo"/> to show.</param>
         /// <returns>An object representing the asynchronous operation.</returns>
-        public static Task ShowException( ExceptionInfo exception )
+        public static Task ShowExceptionAsync( ExceptionInfo exception )
         {
-            return UI.InvokeAsync(() =>
-            {
-                if( exception.NotNullReference() )
-                {
-                    using( var vm = ExceptionViewModel.From(exception) )
-                    {
-                        var wnd = new ExceptionWindow();
-                        wnd.DataContext = vm;
-                        wnd.ShowDialog();
-                    }
-                }
-            });
+            return UI.InvokeAsync(() => ShowExceptionCore(exception));
+        }
+
+        /// <summary>
+        /// Displays the specified <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="exception">The <see cref="Exception"/> to show.</param>
+        public static void ShowException( Exception exception )
+        {
+            ShowException(exception.NullReference() ? null : ExceptionInfo.From(exception));
         }
 
         /// <summary>
@@ -72,11 +92,13 @@ namespace Mechanical.LogViewer
         /// </summary>
         /// <param name="exception">The <see cref="Exception"/> to show.</param>
         /// <returns>An object representing the asynchronous operation.</returns>
-        public static Task ShowException( Exception exception )
+        public static Task ShowExceptionAsync( Exception exception )
         {
-            return ShowException(exception.NullReference() ? null : ExceptionInfo.From(exception));
+            return ShowExceptionAsync(exception.NullReference() ? null : ExceptionInfo.From(exception));
         }
 
         #endregion
+
+        //// TODO: display log entries
     }
 }

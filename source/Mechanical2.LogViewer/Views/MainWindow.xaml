@@ -29,21 +29,37 @@
                 <Rectangle.OpacityMask>
                     <VisualBrush
                         Stretch="Uniform"
-                        Visual="{StaticResource appbar_tools}"/>
+                        Visual="{DynamicResource appbar_tools}"/>
                 </Rectangle.OpacityMask>
             </Rectangle>
         </DataTemplate>
     </metro:MetroWindow.IconTemplate>
 
     <Window.Resources>
-        <converters:NullToBool x:Key="nullToFalseConverter" NullValue="False" NotNullValue="True"/>
-        <converters:BoolToVisibility x:Key="trueToVisibleConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
 
-        <Style x:Key="CellTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="4,2,0,2"/>
-            <Setter Property="FontSize" Value="12"/>
-        </Style>
+                <!-- MahApps.Metro.Resources -->
+                <ResourceDictionary Source="pack://application:,,,/Mechanical.LogViewer;component/Resources/Icons.xaml" />
+
+                <!-- Local resources -->
+                <ResourceDictionary>
+                    <converters:NullToBool x:Key="nullToFalseConverter" NullValue="False" NotNullValue="True"/>
+                    <converters:BoolToVisibility x:Key="trueToVisibleConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+
+                    <Style x:Key="CellTextBlockStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="4,2,0,2"/>
+                        <Setter Property="FontSize" Value="12"/>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -228,7 +244,7 @@
                 </DataGridTemplateColumn>
 
                 <DataGridCheckBoxColumn
-                    ElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                    ElementStyle="{StaticResource MetroDataGridCheckBox}"
                     Header="Exception"
                     Binding="{Binding Path=LogEntry.Exception, Converter={StaticResource nullToFalseConverter}, Mode=OneWay}"
                     IsReadOnly="True"/>
