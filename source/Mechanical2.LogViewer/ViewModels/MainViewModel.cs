@@ -67,7 +67,7 @@ namespace Mechanical.LogViewer.ViewModels
             }
             private set
             {
-                if( !object.ReferenceEquals(this.entries, value ))
+                if( !object.ReferenceEquals(this.entries, value) )
                 {
                     this.entries = value;
                     this.RaisePropertyChanged();

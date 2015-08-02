@@ -213,7 +213,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock
-                                Text="{Binding LogEntry.FileName}"
+                                Text="{Binding LogEntry.SourcePos.File}"
                                 Style="{StaticResource CellTextBlockStyle}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -225,7 +225,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock
-                                Text="{Binding LogEntry.MemberName}"
+                                Text="{Binding LogEntry.SourcePos.Member}"
                                 Style="{StaticResource CellTextBlockStyle}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -237,7 +237,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock
-                                Text="{Binding LogEntry.LineNumber}"
+                                Text="{Binding LogEntry.SourcePos.Line}"
                                 Style="{StaticResource CellTextBlockStyle}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
