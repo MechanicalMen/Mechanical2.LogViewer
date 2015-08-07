@@ -30,8 +30,9 @@ namespace Mechanical.LogViewer.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "XAML is correctly spelled.")]
     public partial class MainWindow : MahApps.Metro.Controls.MetroWindow,
-                                      IEventHandler<EventQueueShuttingDownEvent>
+                                      IEventHandler<EventQueueClosingEvent>
     {
         #region Construction, Destruction
 

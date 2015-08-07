@@ -22,6 +22,7 @@ namespace Mechanical.LogViewer.Views
     /// <summary>
     /// Interaction logic for ExceptionWindow.xaml
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "XAML is correctly spelled.")]
     public partial class ExceptionWindow : MahApps.Metro.Controls.MetroWindow
     {
         public ExceptionWindow()
