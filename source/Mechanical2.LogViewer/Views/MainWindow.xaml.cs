@@ -55,7 +55,7 @@ namespace Mechanical.LogViewer.Views
         {
             try
             {
-                AppCore.EventQueue.Subscribe<EventQueueShuttingDownEvent>(this);
+                AppCore.EventQueue.Subscribe<EventQueueClosingEvent>(this);
                 this.DataContext = new MainViewModel();
             }
             catch( Exception ex )
@@ -64,7 +64,7 @@ namespace Mechanical.LogViewer.Views
             }
         }
 
-        public Task Handle( EventQueueShuttingDownEvent evnt, IEventHandlerQueue queue )
+        public void Handle( EventQueueClosingEvent evnt )
         {
             var vm = this.VM;
             if( vm.NotNullReference() )
@@ -72,8 +72,6 @@ namespace Mechanical.LogViewer.Views
                 UI.Invoke(() => this.DataContext = null);
                 vm.Dispose();
             }
-
-            return null;
         }
 
         #endregion
